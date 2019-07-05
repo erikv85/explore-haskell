@@ -34,4 +34,8 @@ main = do
         fmtd = map read (filter (\x -> length x > 0) inputlines)
     let a = map toNum fmtd
     -- pretty much all set up to do math, finally
-    return a
+
+        x = Fin.principal a
+        y = Fin.foobaz a
+        z = map(\(n, d) -> 1 + n / d) (zip (tail y) (init x))
+    putStrLn $ show z
