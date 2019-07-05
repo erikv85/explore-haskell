@@ -3,12 +3,6 @@ module FinLib where
 accumulate :: Num a => [a] -> [a]
 accumulate = scanl1 (+)
 
-prices :: Num a => [(a, a)] -> [a]
-prices s = p where (p, _) = unzip s
-
-pieces :: Num a => [(a, a)] -> [a]
-pieces s = x where (_, x) = unzip s
-
 alpha :: Num a => [(a, a)] -> [(a, a)]
 alpha s = let (p, x) = unzip s
               ax = accumulate x
