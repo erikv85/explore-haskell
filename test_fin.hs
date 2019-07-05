@@ -23,8 +23,8 @@ toNum p = (price p, pieces p)
 main = do
     args <- getArgs
     let dummyfile = if length args > 0
-               then head args
-               else "../tmp"
+                       then head args
+                       else "../tmp"
     -- how to create the dummy data if need be:
     --writeFile dummyfile "Purchase \"foo\" 1.1 3.14\n\nPurchase \"foo\" 1.2 3.15\n"
 
