@@ -1,0 +1,11 @@
+[
+    Security "a"
+    [ Purchase "190101" 1 2
+    , Purchase "190102" 2 3
+    ]
+    ,
+    Security "b"
+    [ Purchase "190101" 1 2
+    , Purchase "190102" 2 3
+    ]
+]
