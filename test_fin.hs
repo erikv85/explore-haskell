@@ -4,6 +4,9 @@ import qualified FinLib as Fin
 
 data Security = Security String [Purchase] deriving (Show, Read)
 
+name :: Security -> String
+name (Security n _) = n
+
 purchases :: Security -> [Purchase]
 purchases (Security _ l) = l
 
@@ -24,6 +27,19 @@ pieces (Purchase _ _ x) = x
 toNum :: Purchase -> (Double, Double)
 toNum p = (price p, pieces p)
 
+gloo :: ([(Double, Double)] -> t) -> [Security] -> [(String, t)]
+gloo _ [] = []
+gloo f (sec : secs) = let n = name sec
+                          ps = purchases sec
+                          dbls = map toNum ps
+                       in (n, f dbls) : (gloo f secs)
+
+lol :: Show a => [a] -> String
+lol l = '[' : lol' l ++ "]"
+          where lol' [] = ""
+                lol' [x] = show x
+                lol' (x0:x1:xs) = show x0 ++ "\n" ++ lol' (x1:xs)
+
 main = do
     args <- getArgs
     let file = case args of
@@ -38,4 +54,4 @@ main = do
         x = map Fin.principal a
         y = map Fin.foobaz a
         z = map(\(n, d) -> 1 + n / d) (zip (tail (y !! 0)) (init (x !! 0)))
-    putStrLn $ show z
+    putStrLn $ lol (gloo Fin.foobaz fmtd)
