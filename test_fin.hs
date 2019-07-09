@@ -29,12 +29,15 @@ pieces (Purchase _ _ x) = x
 toNum :: Purchase -> (Double, Double)
 toNum p = (price p, pieces p)
 
+toNum' :: Purchase -> (String, Double, Double)
+toNum' p = (date p, price p, pieces p)
+
+toPurchase :: (String, Double, Double) -> Purchase
+toPurchase (d,pr,pi) = Purchase d pr pi
+
 -- use with sort . nub . concat
 allDates :: [Security] -> [[String]]
-allDates [] = []
-allDates (sec : secs) = let ps = purchases sec
-                            dates = map date ps
-                         in dates : allDates secs
+allDates s = map (\sec -> map date (purchases sec)) s
 
 gloo :: ([(Double, Double)] -> t) -> [Security] -> [(String, t)]
 gloo _ [] = []
@@ -43,18 +46,24 @@ gloo f (sec : secs) = let n = name sec
                           dbls = map toNum ps
                        in (n, f dbls) : (gloo f secs)
 
--- FIXME: can't handle list of empty lists
-f :: [[Double]] -> [Double]
-f [] = []
-f l@(x:xs) = sum (map head l) : (f (map tail l))
+-- Takes two lists l and ll=zip3 a _ _ such that a is subset
+-- of l and a !! 0 == l !! 0
+--interpolate' :: Eq a => [a] -> [(a,b,c)] -> (b, c) -> [(a,b,c)]
+interpolate' [] _ _ = []
+interpolate' (x:xs) [] mr@(m,n) = (x, m, n) : (interpolate' xs [] mr)
+interpolate' (x:xs) ll@(y@(a,b,c):ys) mr@(m,n) = if x == a
+                                                    then y : (interpolate' xs ys (b, 0))
+                                                    else (x, m, 0) : (interpolate' xs ll mr)
 
--- FIXME: reverse engineer and adapt
-interpolate :: Eq a => [a] -> [(a, b)] -> [(a, b)] -> b -> [(a, b)]
-interpolate [] _ lll _ = lll
-interpolate (x:xs) [] lll mr = interpolate xs [] (lll ++ [(x, mr)]) mr
-interpolate (x:xs) (y:ys) lll mr = if x == fst y
-                                      then interpolate xs ys (lll ++ [y]) (snd y)
-                                      else interpolate xs (y:ys) (lll ++ [(x, mr)]) mr
+interpolateAllSecs :: [Security] -> [String] -> [Security]
+interpolateAllSecs [] _ = []
+interpolateAllSecs (sec:secs) ds = let n = name sec
+                                       ps = purchases sec
+                                       dbls = map toNum' ps
+                                       ild = interpolate' ds dbls (0.0, 0.0)
+                                       nps = map toPurchase ild
+                                       nsec = Security n nps
+                                    in nsec : interpolateAllSecs secs ds
 
 lol :: Show a => [a] -> String
 lol l = '[' : lol' l ++ "]"
@@ -69,8 +78,10 @@ main = do
                  (hd:_) -> hd
 
     input <- readFile file
-    let fmtd :: [Security]
-        fmtd = read input
+    let fmtd' :: [Security]
+        fmtd' = read input
+        aaa = sort (nub (concat (allDates fmtd')))
+        fmtd = interpolateAllSecs fmtd' aaa
         b = map purchases fmtd
         a = (map . map) toNum b
         x = map Fin.principal a
@@ -81,6 +92,3 @@ main = do
     putStrLn ""
     putStrLn $ "Principal:\n" ++ lol (gloo Fin.principal fmtd)
     putStrLn ""
-
-    let aaa = sort (nub (concat (allDates fmtd)))
-    putStrLn $ show aaa
