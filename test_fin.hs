@@ -1,6 +1,5 @@
-import System.Environment (getArgs)
-
 import Data.List (nub, sort)
+import System.Environment (getArgs)
 
 import qualified FinLib as Fin
 
@@ -65,11 +64,27 @@ interpolateAllSecs (sec:secs) ds = let n = name sec
                                        nsec = Security n nps
                                     in nsec : interpolateAllSecs secs ds
 
+weights :: [(String, [Double])] -> [Double] -> [(String, [Double])]
+weights [] _ = []
+weights ((n,v):vs) pf = let ws = map (\(x,y) -> x/y) (zip v pf)
+                         in (n, ws) : weights vs pf
+
+percent :: [(String, [Double])] -> [(String, [Double])] -> [(String, [Double])]
+percent [] _ = []
+percent ((n,v):vs) ((n',v'):vs') = let pc = map (\(x,y) -> x/y) (zip (tail v) (init v'))
+                                    in (n,pc) : percent vs vs'
+
 lol :: Show a => [a] -> String
 lol l = '[' : lol' l ++ "]"
           where lol' [] = ""
                 lol' [x] = show x
                 lol' (x0:x1:xs) = show x0 ++ "\n" ++ lol' (x1:xs)
+
+f :: [[Double]] -> [Double]
+f [] = []
+f l@(x:xs)
+  | x == []   = []
+  | otherwise = sum (map head l) : (f (map tail l))
 
 main = do
     args <- getArgs
@@ -78,17 +93,41 @@ main = do
                  (hd:_) -> hd
 
     input <- readFile file
-    let fmtd' :: [Security]
-        fmtd' = read input
-        aaa = sort (nub (concat (allDates fmtd')))
-        fmtd = interpolateAllSecs fmtd' aaa
-        b = map purchases fmtd
-        a = (map . map) toNum b
-        x = map Fin.principal a
-        y = map Fin.foobaz a
-        z = map(\(n, d) -> 1 + n / d) (zip (tail (y !! 0)) (init (x !! 0)))
+    let pf' :: [Security]
+        pf' = read input
+        dates = sort (nub (concat (allDates pf')))
+        pf = interpolateAllSecs pf' dates
+        principals = gloo Fin.principal pf
+        values = gloo Fin.value pf
+        gains = gloo Fin.gain pf
+        fb = gloo Fin.foobaz pf
 
-    putStrLn $ "Value:\n" ++ lol (gloo Fin.value fmtd)
+    putStrLn $ lol pf
+    putStrLn $ "Principal:\n" ++ lol principals
     putStrLn ""
-    putStrLn $ "Principal:\n" ++ lol (gloo Fin.principal fmtd)
+    putStrLn $ "Value:\n" ++ lol values
+    putStrLn ""
+    putStrLn $ "Gains:\n" ++ lol gains
+    putStrLn ""
+    putStrLn $ "Foobaz:\n" ++ lol fb
+    putStrLn ""
+
+    let pfValue = f (map snd values)
+    putStrLn $ "Pf value:\n" ++ show pfValue
+    putStrLn ""
+
+    let bb = f (map snd principals)
+    putStrLn $ "Pf principal:\n" ++ show bb
+    putStrLn ""
+
+    let aa = f (map snd fb)
+    putStrLn $ "Pf foobaz:\n" ++ show aa
+    putStrLn ""
+
+    let ws = weights values pfValue
+    putStrLn $ "Weights:\n" ++ lol ws
+    putStrLn ""
+
+    let pcs = percent fb principals
+    putStrLn $ "Percents:\n" ++ lol pcs
     putStrLn ""
