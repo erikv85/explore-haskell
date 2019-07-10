@@ -2,7 +2,7 @@ import Data.List (nub, sort)
 import System.Environment (getArgs)
 
 import qualified FinLib as Fin
-import NotCategorized
+import Uncategorized
 
 main = do
     args <- getArgs

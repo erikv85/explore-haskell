@@ -1,4 +1,4 @@
-module NotCategorized where
+module Uncategorized where
 
 import Text.Printf (printf)
 
