@@ -1,5 +1,9 @@
 module NotCategorized where
 
+import Text.Printf (printf)
+
+type NamedSeries = (String, [Double]) -- for later use ?
+
 data Security = Security String [Purchase] deriving (Show, Read)
 
 name :: Security -> String
@@ -76,6 +80,19 @@ lol l = '[' : lol' l ++ "]"
           where lol' [] = ""
                 lol' [x] = show x
                 lol' (x0:x1:xs) = show x0 ++ "\n" ++ lol' (x1:xs)
+
+lol2 :: Show a => [(a, [Double])] -> String
+lol2 l = '[' : lol2' l ++ "]"
+           where lol2' [] = ""
+                 lol2' [(x,y)] = show x ++ "," ++ lol3 y
+                 lol2' (x0:x1:xs) = lol2' [x0] ++ "\n" ++ lol2' (x1:xs)
+
+-- TODO: add format parameter
+lol3 :: [Double] -> String
+lol3 l = '[' : lol3' l ++ "]"
+           where lol3' [] = ""
+                 lol3' [x] = printf "%.2f" x
+                 lol3' (x0:x1:xs) = lol3' [x0] ++ "," ++ lol3' (x1:xs)
 
 f :: [[Double]] -> [Double]
 f [] = []

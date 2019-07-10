@@ -21,31 +21,31 @@ main = do
         fb = gloo Fin.foobaz pf
 
     putStrLn $ lol pf
-    putStrLn $ "Principal:\n" ++ lol principals
+    putStrLn $ "Principal:\n" ++ lol2 principals
     putStrLn ""
-    putStrLn $ "Value:\n" ++ lol values
+    putStrLn $ "Value:\n" ++ lol2 values
     putStrLn ""
-    putStrLn $ "Gains:\n" ++ lol gains
+    putStrLn $ "Gains:\n" ++ lol2 gains
     putStrLn ""
-    putStrLn $ "Foobaz:\n" ++ lol fb
+    putStrLn $ "Foobaz:\n" ++ lol2 fb
     putStrLn ""
 
     let pfValue = f (map snd values)
-    putStrLn $ "Pf value:\n" ++ show pfValue
+    putStrLn $ "Pf value:\n" ++ lol3 pfValue
     putStrLn ""
 
     let bb = f (map snd principals)
-    putStrLn $ "Pf principal:\n" ++ show bb
+    putStrLn $ "Pf principal:\n" ++ lol3 bb
     putStrLn ""
 
     let aa = f (map snd fb)
-    putStrLn $ "Pf foobaz:\n" ++ show aa
+    putStrLn $ "Pf foobaz:\n" ++ lol3 aa
     putStrLn ""
 
     let ws = weights values pfValue
-    putStrLn $ "Weights:\n" ++ lol ws
+    putStrLn $ "Weights:\n" ++ lol2 ws
     putStrLn ""
 
     let pcs = percent fb principals
-    putStrLn $ "Percents:\n" ++ lol pcs
+    putStrLn $ "Percents:\n" ++ lol2 pcs
     putStrLn ""
