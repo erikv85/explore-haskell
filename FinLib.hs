@@ -26,3 +26,9 @@ gain s = gain' (alpha s) (0, 0)
 -- `foobaz` is [(Integer, Integer)] -> [Integer], why?
 foobaz :: Num a => [(a, a)] -> [a]
 foobaz = accumulate . gain
+
+normalize :: (Eq a, Fractional a) => [a] -> [a]
+normalize [] = []
+normalize l@(x:xs)
+  | x == 0    = x : normalize(xs)
+  | otherwise = map (\y -> y/x) l
