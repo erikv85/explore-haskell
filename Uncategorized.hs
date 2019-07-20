@@ -94,6 +94,12 @@ lol3 l = '[' : lol3' l ++ "]"
                  lol3' [x] = printf "%.2f" x
                  lol3' (x0:x1:xs) = lol3' [x0] ++ "," ++ lol3' (x1:xs)
 
+moo :: Num a => [[a]] -> [[a]] -> [[a]]
+moo [] _ = []
+moo _ [] = []
+moo (w:ws) (p:ps) = let res = map (\(w',p') -> w' * p') (zip w p)
+                     in res : moo ws ps
+
 f :: [[Double]] -> [Double]
 f [] = []
 f l@(x:xs)
