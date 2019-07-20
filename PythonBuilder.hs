@@ -26,8 +26,10 @@ main = do
         outfile = "pydata.py"
         xstr = "x = " ++ show x -- for line plot
         bstr = "b = " ++ show b -- for bar plot
+        pf_price = Uncat.f $ Uncat.moo (map snd b) (map snd x)
+        ystr = "y = " ++ show pf_price
 
-    let all = banner : xstr : bstr : []
+    let all = banner : xstr : bstr : ystr : []
         all' = concat $ intersperse "\n" all
 
     writeFile outfile (all' ++ "\n")
