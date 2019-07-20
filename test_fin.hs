@@ -38,6 +38,10 @@ main = do
     putStrLn $ "Pf principal:\n" ++ lol3 bb
     putStrLn ""
 
+    let cc = f (map snd gains)
+    putStrLn $ "Pf gains:\n" ++ lol3 cc
+    putStrLn ""
+
     let aa = f (map snd fb)
     putStrLn $ "Pf foobaz:\n" ++ lol3 aa
     putStrLn ""
@@ -48,4 +52,13 @@ main = do
 
     let pcs = percent fb principals
     putStrLn $ "Percents:\n" ++ lol2 pcs
+    putStrLn ""
+
+    let pfNormalized = gloo (Fin.normalize . (map fst)) pf
+    putStrLn $ "Normalized prices:\n" ++ lol2 pfNormalized
+    putStrLn ""
+
+    -- double check that this is correct/relevant
+    let pfPrice = f $ moo (map snd ws) (map snd pfNormalized)
+    putStrLn $ "Price of portfolio:\n" ++ lol3 pfPrice
     putStrLn ""
